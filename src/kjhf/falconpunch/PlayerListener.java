@@ -75,15 +75,39 @@ public class PlayerListener implements Listener {
 
 			}
 
-			if ((targetEntity instanceof Vehicle) && targetEntity.isEmpty()) {
-					// The boat/minecart/vehicle is empty, the puncher might want to get inside it?
-					return;
+			// TODO: clean up pig logic
 
-			}
+			// checks to see if the player is trying to get in a vehicle
+			if ((targetEntity instanceof Vehicle)) {
 
-			if ((targetEntity instanceof Pig) && ((Pig) targetEntity).hasSaddle()) {
-					// The target is a pig with a saddle and no passenger. Puncher might want to ride the pig.
-					return;
+					if (targetEntity instanceof Pig) {
+
+						// is a pig
+
+						if (((Pig) targetEntity).hasSaddle()) {
+
+								if (targetEntity.isEmpty()) {
+
+									return;
+
+								}
+
+								// checks to make sure person isn't punching their own pig as they enter it
+								Entity vehicle = player.getVehicle();
+
+								if (vehicle != null && vehicle.equals(targetEntity)) {
+									return;
+
+								}
+
+						}
+
+					} else if (targetEntity.isEmpty()) {
+
+						return;
+
+					}
+
 			}
 
 			if (targetEntity instanceof Wolf) {
