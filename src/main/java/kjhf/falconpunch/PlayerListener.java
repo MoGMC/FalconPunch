@@ -5,7 +5,13 @@ import java.util.Random;
 import org.bukkit.ChatColor;
 import org.bukkit.GameMode;
 import org.bukkit.Material;
-import org.bukkit.entity.*;
+import org.bukkit.Particle;
+import org.bukkit.World;
+import org.bukkit.entity.Entity;
+import org.bukkit.entity.Pig;
+import org.bukkit.entity.Player;
+import org.bukkit.entity.Vehicle;
+import org.bukkit.entity.Wolf;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerInteractEntityEvent;
@@ -36,6 +42,11 @@ public class PlayerListener implements Listener {
 			}
 
 			if (player.getInventory().getItemInMainHand().getType() != Material.AIR) {
+					return;
+
+			}
+
+			if (player.isSneaking()) {
 					return;
 
 			}
@@ -173,6 +184,17 @@ public class PlayerListener implements Listener {
 			} else {
 					velocity = velocity.add(direction).add(additionalverticle).multiply(5).multiply(crit);
 			}
+
+			double x = targetEntity.getLocation().getX();
+			double y = targetEntity.getLocation().getY();
+			double z = targetEntity.getLocation().getZ();
+
+			World world = targetEntity.getWorld();
+
+			world.spawnParticle(Particle.EXPLOSION_HUGE, x, y, z, 3, 0, 2, 0);
+
+			world.createExplosion(x, y, z, 0.0F, false, false);
+
 			targetEntity.setVelocity(velocity);
 
 			final StringBuilder message = new StringBuilder();
