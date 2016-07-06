@@ -1,6 +1,8 @@
 package kjhf.falconpunch;
 
+import java.util.HashMap;
 import java.util.Random;
+import java.util.UUID;
 
 import org.bukkit.ChatColor;
 import org.bukkit.GameMode;
@@ -15,6 +17,8 @@ import org.bukkit.entity.Wolf;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerInteractEntityEvent;
+import org.bukkit.event.player.PlayerQuitEvent;
+import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.util.Vector;
 
 public class PlayerListener implements Listener {
@@ -23,11 +27,15 @@ public class PlayerListener implements Listener {
 
 		private Random random;
 
+		public HashMap<UUID, Long> cooldowns;
+
 		public PlayerListener(FalconPunch plugin) {
 
 			this.plugin = plugin;
 
 			random = new Random();
+
+			cooldowns = new HashMap<UUID, Long>();
 
 		}
 
@@ -37,6 +45,11 @@ public class PlayerListener implements Listener {
 			final Player player = event.getPlayer();
 
 			if (!player.hasPermission("falconpunch.punch")) {
+					return;
+
+			}
+
+			if (event.getHand().equals(EquipmentSlot.OFF_HAND)) {
 					return;
 
 			}
@@ -124,6 +137,17 @@ public class PlayerListener implements Listener {
 					}
 
 			}
+
+			if (!cooldowns.containsKey(player.getUniqueId())) {
+					cooldowns.put(player.getUniqueId(), System.currentTimeMillis());
+
+			} else if (System.currentTimeMillis() - cooldowns.get(player.getUniqueId()) < plugin.cooldown) {
+					player.sendMessage(ChatColor.DARK_AQUA + "You can only use falcon punch once every " + (plugin.cooldown / 1000) + " seconds!");
+					return;
+
+			}
+
+			cooldowns.put(player.getUniqueId(), System.currentTimeMillis());
 
 			int i = random.nextInt(99) + 1;
 
@@ -299,4 +323,12 @@ public class PlayerListener implements Listener {
 			}
 			player.sendMessage(message.toString());
 		}
+
+		@EventHandler
+		public void onPlayerQuit(PlayerQuitEvent e) {
+
+			cooldowns.remove(e.getPlayer().getUniqueId());
+
+		}
+
 }

@@ -22,6 +22,7 @@ Settings:
     AllowPVPFalconPunch: true
     NoImmunity: false
     OnlyPVPFalconPunch: false
+    cooldown: 60000
 Fails:
     AfterFailDoFireChance: 33
     AfterFailDoNothingChance: 34
