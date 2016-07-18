@@ -23,7 +23,7 @@ import org.bukkit.util.Vector;
 
 public class PlayerListener implements Listener {
 
-		private final FalconPunch plugin;
+		private FalconPunch plugin;
 
 		private Random random;
 
@@ -50,6 +50,11 @@ public class PlayerListener implements Listener {
 			}
 
 			if (event.getHand().equals(EquipmentSlot.OFF_HAND)) {
+					return;
+
+			}
+
+			if (plugin.shouldNotPunch(player.getUniqueId())) {
 					return;
 
 			}
@@ -328,6 +333,7 @@ public class PlayerListener implements Listener {
 		public void onPlayerQuit(PlayerQuitEvent e) {
 
 			cooldowns.remove(e.getPlayer().getUniqueId());
+			plugin.resetPlayer(e.getPlayer().getUniqueId());
 
 		}
 

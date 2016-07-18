@@ -1,14 +1,16 @@
 name: FalconPunch
 main: kjhf.falconpunch.FalconPunch
-version: 0.11
+version: 0.11111
 description: Falcon ... PAUNCH!
 author: kjhf
 website: forums.bukkit.org/threads/.34187/
 dev-url: http://dev.bukkit.org/server-mods/falconpunch/
 commands:
   falconpunch:
-    description: Reloads FalconPunch
-    aliases: fp
+    description: Toggles FalconPunch
+    permission: falconpunch.toggle
+    usage: /falconpunch
+    aliases: [fp]
 permissions:
  falconpunch.*:
    description: Gives player all but immunity.

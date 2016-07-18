@@ -1,10 +1,15 @@
 package kjhf.falconpunch;
 
 import java.io.File;
+import java.util.HashSet;
+import java.util.Set;
+import java.util.UUID;
 
+import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.file.FileConfiguration;
+import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 
 public class FalconPunch extends JavaPlugin {
@@ -25,6 +30,8 @@ public class FalconPunch extends JavaPlugin {
 
 		public int cooldown = 60000;
 
+		Set<UUID> noPunch;
+
 		@Override
 		public void onDisable() {
 			this.getLogger().info("Version " + this.getDescription().getVersion() + " disabled.");
@@ -32,20 +39,49 @@ public class FalconPunch extends JavaPlugin {
 
 		@Override
 		public void onEnable() {
+
 			this.loadConfigs();
+
 			this.getServer().getPluginManager().registerEvents(new PlayerListener(this), this);
+
+			noPunch = new HashSet<UUID>();
+
 			this.getLogger().info("Version " + this.getDescription().getVersion() + " is enabled!");
+
 		}
 
 		@Override
 		public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
-			if (sender.hasPermission("falconpunch.reload")) {
-					this.loadConfigs();
-					sender.sendMessage("[FalconPunch] Version " + this.getDescription().getVersion() + " reloaded.");
-			} else {
-					sender.sendMessage("[FalconPunch] You don't have access to this command");
+
+			if (!(sender instanceof Player)) {
+					return false;
+
 			}
+
+			UUID uuid = ((Player) sender).getUniqueId();
+
+			if (noPunch.contains(uuid)) {
+					noPunch.remove(uuid);
+					sender.sendMessage(ChatColor.DARK_AQUA + "Toggled FalconPunch on!");
+
+			} else {
+					noPunch.add(uuid);
+					sender.sendMessage(ChatColor.DARK_AQUA + "Toggled FalconPunch off!");
+					
+			}
+
 			return true;
+
+		}
+
+		boolean shouldNotPunch(UUID uuid) {
+			return noPunch.contains(uuid);
+
+		}
+
+		public void resetPlayer(UUID uuid) {
+			noPunch.remove(uuid);
+
 		}
 
 		private void loadConfigs() {
